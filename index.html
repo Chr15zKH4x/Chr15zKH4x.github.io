@@ -15,6 +15,12 @@
         <div class="blob blob-3"></div>
     </div>
 
+    <!-- Fullscreen Image Lightbox Modal -->
+    <div class="lightbox-modal" id="lightbox-modal">
+        <span class="lightbox-close" id="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img" alt="Fullscreen Screenshot Preview">
+    </div>
+
     <!-- Caelestia-style Left Elastic Sidebar Trigger & Panel -->
     <div class="left-hover-zone" id="hover-zone"></div>
     <aside class="side-panel" id="side-panel">
@@ -93,14 +99,14 @@
                         <span class="terminal-title">guest@noctaelestia:~</span>
                     </div>
                     <div class="terminal-body" id="terminal-content">
-                        <p class="terminal-hint">INFO: Type <span class="highlight-cmd">screenshots</span> to view previews, or <span class="highlight-cmd">/about</span> to switch route.</p>
+                        <p class="terminal-hint">INFO: Type <span class="highlight-cmd">screenshots</span> to view previews, <span class="highlight-cmd">exit</span> to close, or <span class="highlight-cmd">/about</span> to switch route.</p>
                         <div class="input-line">
                             <span class="prompt">noctaelestia $</span>
                             <input type="text" id="terminal-input" autofocus autocomplete="off" spellcheck="false">
                         </div>
                     </div>
                     
-                    <!-- Dynamic Gallery Frame avec animation fluide -->
+                    <!-- Dynamic Gallery Frame avec clics plein écran -->
                     <div class="gallery-container hidden" id="screenshot-gallery">
                         <div class="gallery-grid">
                             <img src="assets/1.png" alt="Screenshot 1" class="gallery-img">
