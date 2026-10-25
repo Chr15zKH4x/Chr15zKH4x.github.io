@@ -1,14 +1,15 @@
-/* Reset & Global Design Tokens */
+/* --- RESET & DESIGN TOKENS --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 :root {
-    --bg-color: #0d0a1b;
+    --bg-color: #0b0817;
+    --panel-bg: rgba(13, 10, 27, 0.9);
     --card-bg: rgba(255, 255, 255, 0.03);
     --text-primary: #f1f1f7;
     --text-secondary: #a0a0cc;
@@ -23,8 +24,9 @@
 
 [data-mode="light"] {
     --bg-color: #eef2f7;
-    --card-bg: rgba(255, 255, 255, 0.7);
-    --text-primary: #1e1e2d;
+    --panel-bg: rgba(255, 255, 255, 0.92);
+    --card-bg: rgba(255, 255, 255, 0.75);
+    --text-primary: #1a1a2e;
     --text-secondary: #5a5a7a;
     --border-color: rgba(0, 0, 0, 0.08);
     --convex-shadow: 0 15px 30px rgba(0, 0, 0, 0.08), inset 0 6px 12px rgba(255, 255, 255, 0.9), inset 0 -6px 12px rgba(0, 0, 0, 0.05);
@@ -57,33 +59,7 @@ body {
     justify-content: space-between;
 }
 
-/* --- SPA VIEW SYSTEM --- */
-.view-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-grow: 1;
-}
-
-.view {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeInView 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-.view.active {
-    display: flex;
-}
-
-@keyframes fadeInView {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- FLUID LIQUID BACKGROUND GLOWS --- */
+/* --- FLUID WATER MORPHING BACKGROUND BLOBS --- */
 .background-glow {
     position: fixed;
     top: 0;
@@ -113,59 +89,6 @@ body {
     100% { border-radius: 38% 62% 48% 52% / 62% 38% 65% 35%; transform: translate(0, 0) scale(1) rotate(360deg); }
 }
 
-/* --- TOP NAVIGATION BAR --- */
-.top-nav {
-    width: 100%;
-    padding: 1.2rem 2.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    backdrop-filter: blur(15px);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    font-weight: 700;
-    font-size: 1.2rem;
-}
-
-.nav-logo {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-}
-
-.nav-controls {
-    display: flex;
-    gap: 0.8rem;
-}
-
-.nav-btn {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.nav-btn:hover {
-    transform: translateY(-2px) scale(1.03);
-    border-color: var(--accent-secondary);
-}
-
 /* --- CAELESTIA ELASTIC SIDE PANEL --- */
 .left-hover-zone {
     position: fixed;
@@ -179,46 +102,42 @@ body {
 .side-panel {
     position: fixed;
     top: 20px;
-    left: -310px;
-    width: 300px;
+    left: -320px;
+    width: 310px;
     height: calc(100vh - 40px);
-    background: rgba(13, 10, 27, 0.85);
+    background: var(--panel-bg);
     backdrop-filter: blur(25px);
     border: 1px solid var(--border-color);
     border-radius: 0 35px 35px 0;
     z-index: 100;
-    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
-    transition: transform 0.7s cubic-bezier(0.68, -0.6, 0.32, 1.6);
-}
-
-[data-mode="light"] .side-panel {
-    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 25px 0 60px rgba(0, 0, 0, 0.5);
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .side-panel.open {
-    transform: translateX(310px);
+    transform: translateX(320px);
 }
 
 .panel-handle {
     position: absolute;
-    right: -24px;
+    right: -26px;
     top: 50%;
     transform: translateY(-50%);
-    width: 24px;
-    height: 60px;
+    width: 26px;
+    height: 65px;
     background: var(--accent-primary);
-    border-radius: 0 15px 15px 0;
+    border-radius: 0 16px 16px 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    font-size: 1.4rem;
+    color: #ffffff;
+    font-size: 1.5rem;
     cursor: pointer;
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 5px 0 18px rgba(0, 0, 0, 0.3);
 }
 
 .panel-content {
-    padding: 2rem 1.5rem;
+    padding: 2.2rem 1.6rem;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -229,46 +148,84 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .panel-logo {
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
+    object-fit: contain;
+    box-shadow: 0 0 12px var(--accent-secondary);
 }
 
 .panel-menu {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-top: 2rem;
+    gap: 0.9rem;
+    margin-top: 1.5rem;
 }
 
 .panel-link {
     color: var(--text-primary);
     text-decoration: none;
-    padding: 0.8rem 1rem;
-    border-radius: 18px;
+    padding: 0.85rem 1.1rem;
+    border-radius: 20px;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
     cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.panel-link:hover {
+.panel-link:hover, .panel-link.active-link {
     background: var(--accent-primary);
     color: #ffffff;
     transform: translateX(6px);
+    border-color: var(--accent-secondary);
 }
 
-.panel-widgets {
-    margin-top: auto;
+.panel-controls-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.controls-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.ctrl-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 18px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ctrl-btn:hover {
+    border-color: var(--accent-secondary);
+    transform: translateY(-2px);
 }
 
 .widget-card {
     background: var(--card-bg);
-    padding: 1rem;
-    border-radius: 20px;
+    padding: 0.9rem;
+    border-radius: 18px;
     border: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -278,10 +235,36 @@ body {
 .widget-badge.active {
     background: var(--accent-secondary);
     color: #000;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     padding: 0.2rem 0.6rem;
-    border-radius: 12px;
+    border-radius: 10px;
     font-weight: 700;
+}
+
+/* --- SPA VIEW SYSTEM --- */
+.view-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.view {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeInView 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.view.active {
+    display: flex;
+}
+
+@keyframes fadeInView {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* --- BRANDING HEADER --- */
@@ -341,7 +324,7 @@ h1 {
     padding: 2rem;
 }
 
-/* --- CARDS & COMPONENTS --- */
+/* --- CARDS & CONVEX CARDS --- */
 .card {
     background: var(--card-bg);
     border-radius: 35px;
@@ -464,6 +447,6 @@ h2 { margin-bottom: 0.5rem; font-size: 1.7rem; color: var(--text-primary); }
 .about-body { color: var(--text-secondary); line-height: 1.6; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
 .about-body strong { color: var(--text-primary); }
 .about-links { display: flex; flex-wrap: wrap; gap: 1rem; }
-.about-btn { text-decoration: none; padding: 0.8rem 1.4rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; background: var(--accent-primary); color: #ffffff; }
+.about-btn { text-decoration: none; padding: 0.8rem 1.4rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; background: var(--accent-primary); color: #ffffff; display: inline-flex; align-items: center; gap: 0.5rem; }
 
-footer { padding: 2.5rem; font-size: 0.9rem; color: var(--text-secondary); }
+footer { padding: 2.5rem; font-size: 0.9rem; color: var(--text-secondary); text-align: center; }
