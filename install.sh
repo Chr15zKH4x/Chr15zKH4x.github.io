@@ -117,7 +117,7 @@ sudo systemctl enable greetd.service
 
 # --- STEP 6: CLI TOOLS ---
 echo -e "${CYAN}==> [6/7] Installing CLI utilities (yazi, ytfzf, fzf, cava, cbonsai, etc.)...${RESET}"
-yay -S --needed --noconfirm yazi cmatrix-git ytfzf fzf cava cbonsai tty-clock fastfetch
+yay -S --needed --noconfirm yazi cmatrix-git ytfzf fzf cava cbonsai tty-clock fastfetch youtui-player
 
 # --- STEP 7: CLONE NOCTAELESTIA & DEPLOY CONFIGURATIONS ---
 echo -e "${CYAN}==> [7/7] Cloning Noctaelestia and deploying configurations...${RESET}"
@@ -145,7 +145,7 @@ fi
 # Copy ~/Noctaelestia/mpv to ~/.config/mpv
 if [ -d "$HOME/Noctaelestia/mpv" ]; then
     rm -rf ~/.config/mpv
-    cp -r "$HOME/Noctaelestia/mpv" ~/.config/
+    mv "$HOME/Noctaelestia/mpv" ~/.config/
     echo -e "${GREEN}[+] Successfully copied ~/Noctaelestia/mpv to ~/.config/mpv!${RESET}"
 else
     echo -e "${YELLOW}[!] Warning: ~/Noctaelestia/mpv directory not found in the repository.${RESET}"
