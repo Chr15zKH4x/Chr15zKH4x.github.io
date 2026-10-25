@@ -81,7 +81,7 @@ echo -e "${CYAN}==> [4/7] Installing Noctalia-Shell and greetd display manager..
 sudo pacman -S --needed --noconfirm noctalia greetd
 
 echo -e "${CYAN}==> Installing Noctalia Greeter via yay...${RESET}"
-yay -S --needed --noconfirm noctalia-qs-greeter-git || yay -S --needed --noconfirm noctalia-qs-greeter
+yay -S --needed --noconfirm noctalia-greeter || yay -S --needed --noconfirm noctalia-greeter
 
 # --- STEP 5: CONFIGURE GREETD VIA PYTHON ---
 echo -e "${CYAN}==> [5/7] Writing /etc/greetd/config.toml...${RESET}"
