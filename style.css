@@ -59,6 +59,59 @@ body {
     justify-content: space-between;
 }
 
+/* --- FULLSCREEN LIGHTBOX MODAL --- */
+.lightbox-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(5, 3, 15, 0.92);
+    backdrop-filter: blur(20px);
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lightbox-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.lightbox-content {
+    max-width: 90%;
+    max-height: 85vh;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 255, 204, 0.2);
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    object-fit: contain;
+}
+
+.lightbox-modal.active .lightbox-content {
+    transform: scale(1);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 25px;
+    right: 35px;
+    color: var(--text-primary);
+    font-size: 2.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.lightbox-close:hover {
+    color: var(--accent-secondary);
+    transform: scale(1.15) rotate(90deg);
+}
+
 /* --- FLUID WATER MORPHING BACKGROUND BLOBS --- */
 .background-glow {
     position: fixed;
@@ -398,7 +451,7 @@ h1 {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border-color);
-    max-height: 500px;
+    max-height: 600px;
     opacity: 1;
     transform: translateY(0) scale(1);
     transition: max-height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -416,7 +469,7 @@ h1 {
 }
 
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.2rem; }
-.gallery-img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 20px; border: 1px solid var(--border-color); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.gallery-img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease; }
 .gallery-img:hover { transform: scale(1.06) rotate(1deg); border-color: var(--accent-secondary); }
 
 /* Math section & Specs */
