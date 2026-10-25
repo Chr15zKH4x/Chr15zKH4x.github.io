@@ -1,20 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ELASTIC SIDE PANEL & HOVER ZONE ---
+    // --- SIDE PANEL TOGGLE & HOVER ---
     const sidePanel = document.getElementById('side-panel');
     const hoverZone = document.getElementById('hover-zone');
     const panelToggle = document.getElementById('panel-toggle');
 
-    function togglePanel() {
-        sidePanel.classList.toggle('open');
+    function openPanel() {
+        sidePanel.classList.add('open');
     }
 
-    hoverZone.addEventListener('mouseenter', togglePanel);
-    panelToggle.addEventListener('click', togglePanel);
-    sidePanel.addEventListener('mouseleave', () => {
+    function closePanel() {
         sidePanel.classList.remove('open');
+    }
+
+    hoverZone.addEventListener('mouseenter', openPanel);
+    panelToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sidePanel.classList.toggle('open');
     });
 
-    // --- SPA ROUTER SYSTEM FOR ENDPOINTS (/ and /about) ---
+    document.addEventListener('click', (e) => {
+        if (!sidePanel.contains(e.target) && e.target !== hoverZone) {
+            closePanel();
+        }
+    });
+
+    // --- NAVIGATION ROUTER (ENDPOINT SYSTEM) ---
     const navRoutes = document.querySelectorAll('.nav-route');
     const views = {
         '/': document.getElementById('home-view'),
@@ -23,10 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function navigateTo(route) {
         Object.keys(views).forEach(r => {
-            if (r === route) {
-                views[r].classList.add('active');
-            } else {
-                views[r].classList.remove('active');
+            if (views[r]) {
+                if (r === route) {
+                    views[r].classList.add('active');
+                } else {
+                    views[r].classList.remove('active');
+                }
             }
         });
 
@@ -38,15 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        sidePanel.classList.remove('open');
+        closePanel();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    navRoutes.forEach(link => {
-        link.addEventListener('click', (e) => {
+    // Gestion directe des clics sur les boutons de navigation
+    navRoutes.forEach(btn => {
+        btn.addEventListener('click', (e) => {
             e.preventDefault();
-            const route = link.getAttribute('data-route');
-            if (route) navigateTo(route);
+            e.stopPropagation();
+            const route = btn.getAttribute('data-route');
+            if (route) {
+                navigateTo(route);
+            }
         });
     });
 
@@ -57,7 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeLabel = document.getElementById('theme-label');
     const htmlRoot = document.documentElement;
 
-    modeBtn.addEventListener('click', () => {
+    modeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const isDark = htmlRoot.getAttribute('data-mode') === 'dark';
         htmlRoot.setAttribute('data-mode', isDark ? 'light' : 'dark');
         modeLabel.textContent = isDark ? '☀️ Light' : '🌙 Dark';
@@ -66,14 +83,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const themes = ['neon', 'ocean', 'sunset'];
     let themeIdx = 0;
 
-    themeBtn.addEventListener('click', () => {
+    themeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         themeIdx = (themeIdx + 1) % themes.length;
         const nextTheme = themes[themeIdx];
         htmlRoot.setAttribute('data-theme', nextTheme);
         themeLabel.textContent = nextTheme.charAt(0).toUpperCase() + nextTheme.slice(1);
     });
 
-    // --- INTERACTIVE TERMINAL ---
+    // --- INTERACTIVE TERMINAL WITH ELASTIC MORPHING ---
     const terminalInput = document.getElementById('terminal-input');
     const terminalContainer = document.getElementById('interactive-terminal');
     const galleryContainer = document.getElementById('screenshot-gallery');
@@ -93,13 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     terminalContainer.classList.add('active-pill-morph');
                     galleryContainer.classList.remove('hidden');
                     log.style.color = '#00ffcc';
-                    log.innerText = '» Morphing UI engaged. Displaying gallery...';
+                    log.innerText = '» Liquid morphing engaged. Displaying gallery...';
                     contentArea.insertBefore(log, terminalInput.parentElement);
                 } else if (command === '/about' || command === 'about') {
                     log.style.color = '#00ffcc';
                     log.innerText = '» Routing to /about endpoint...';
                     contentArea.insertBefore(log, terminalInput.parentElement);
-                    setTimeout(() => navigateTo('/about'), 500);
+                    setTimeout(() => navigateTo('/about'), 400);
                 } else {
                     log.style.color = '#ff5f56';
                     log.innerText = `bash: command not found: ${command}. Try 'screenshots' or '/about'.`;
