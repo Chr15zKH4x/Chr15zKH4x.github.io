@@ -3,8 +3,420 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noctaelestia-Shell</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Noctaelestia Shell</title>
+    <style>
+        /* --- RESET & DESIGN TOKENS --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        :root {
+            --bg-color: #0b0817;
+            --panel-bg: rgba(13, 10, 27, 0.88);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text-primary: #f1f1f7;
+            --text-secondary: #a0a0cc;
+            --accent-primary: #7f00ff;
+            --accent-secondary: #00ffcc;
+            --blob-1: linear-gradient(45deg, #1e00ff, #00ffcc);
+            --blob-2: linear-gradient(45deg, #ec008c, #fc6767);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --convex-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 8px 16px rgba(255, 255, 255, 0.05), inset 0 -8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-mode="light"] {
+            --bg-color: #eef2f7;
+            --panel-bg: rgba(255, 255, 255, 0.92);
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --text-primary: #1a1a2e;
+            --text-secondary: #5a5a7a;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --convex-shadow: 0 15px 30px rgba(0, 0, 0, 0.08), inset 0 6px 12px rgba(255, 255, 255, 0.9), inset 0 -6px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="ocean"] {
+            --accent-primary: #0072ff;
+            --accent-secondary: #00c6ff;
+            --blob-1: linear-gradient(45deg, #0052d4, #4364f7);
+            --blob-2: linear-gradient(45deg, #6fb1fc, #00c6ff);
+        }
+
+        [data-theme="sunset"] {
+            --accent-primary: #ff416c;
+            --accent-secondary: #ff4b2b;
+            --blob-1: linear-gradient(45deg, #ff416c, #ff4b2b);
+            --blob-2: linear-gradient(45deg, #f857a6, #ff5858);
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- FLUID BACKGROUND GLOWS --- */
+        .background-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.35;
+            animation: liquidMorph 16s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .blob-1 { width: 500px; height: 500px; top: -10%; left: -10%; background: var(--blob-1); }
+        .blob-2 { width: 550px; height: 550px; bottom: -10%; right: -10%; animation-delay: -6s; background: var(--blob-2); }
+
+        @keyframes liquidMorph {
+            0% { border-radius: 42% 58% 62% 38% / 45% 45% 55% 55%; transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%; transform: translate(60px, -40px) scale(1.05) rotate(180deg); }
+            100% { border-radius: 38% 62% 48% 52% / 62% 38% 65% 35%; transform: translate(0, 0) scale(1) rotate(360deg); }
+        }
+
+        /* --- CAELESTIA ELASTIC SIDE PANEL (LEFT SIDEBAR) --- */
+        .left-hover-zone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 25px;
+            height: 100vh;
+            z-index: 99;
+        }
+
+        .side-panel {
+            position: fixed;
+            top: 20px;
+            left: -320px;
+            width: 310px;
+            height: calc(100vh - 40px);
+            background: var(--panel-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border-color);
+            border-radius: 0 35px 35px 0;
+            z-index: 100;
+            box-shadow: 25px 0 60px rgba(0, 0, 0, 0.5);
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .side-panel.open {
+            transform: translateX(320px);
+        }
+
+        .panel-handle {
+            position: absolute;
+            right: -26px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 26px;
+            height: 65px;
+            background: var(--accent-primary);
+            border-radius: 0 16px 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 5px 0 18px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel-content {
+            padding: 2.2rem 1.6rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 12px var(--accent-secondary);
+        }
+
+        .panel-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            margin-top: 1.5rem;
+        }
+
+        .panel-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0.85rem 1.1rem;
+            border-radius: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .panel-link:hover, .panel-link.active-link {
+            background: var(--accent-primary);
+            color: #ffffff;
+            transform: translateX(6px);
+            border-color: var(--accent-secondary);
+        }
+
+        .panel-controls-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .controls-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .ctrl-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ctrl-btn:hover {
+            border-color: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        /* --- SPA VIEW SYSTEM & ROUTING --- */
+        .view-container {
+            width: 100%;
+            max-width: 850px;
+            padding: 2rem 1.5rem;
+            flex-grow: 1;
+        }
+
+        .view {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeInView 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        @keyframes fadeInView {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- BRANDING HEADER --- */
+        .branding-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2.5rem 1rem 1rem;
+            width: 100%;
+        }
+
+        .logo-wrapper {
+            width: 125px;
+            height: 125px;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--convex-shadow);
+            animation: floatLogo 6s infinite ease-in-out;
+        }
+
+        .project-logo {
+            width: 105px;
+            height: 105px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(120deg, var(--text-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* --- CARDS & CONVEX CARDS --- */
+        .card {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 35px;
+            padding: 2.2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--convex-shadow);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* --- TERMINAL --- */
+        .terminal-card {
+            background: rgba(13, 10, 28, 0.82);
+            border-color: rgba(127, 0, 255, 0.25);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.8rem;
+        }
+
+        .terminal-dots { display: flex; gap: 0.5rem; margin-right: 1rem; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27c93f; }
+
+        .terminal-title { font-size: 0.9rem; color: var(--text-secondary); }
+        .terminal-hint { color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem; }
+
+        .highlight-cmd {
+            color: var(--accent-secondary);
+            font-weight: 700;
+            background: rgba(0, 255, 204, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+        }
+
+        .input-line { display: flex; align-items: center; gap: 0.5rem; }
+        .prompt { color: var(--accent-primary); font-weight: bold; }
+
+        #terminal-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--accent-secondary);
+            font-size: 1rem;
+            flex-grow: 1;
+            font-family: monospace;
+        }
+
+        .gallery-container {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .gallery-container.hidden { display: none; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; }
+        .gallery-img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 18px; border: 1px solid var(--border-color); }
+
+        /* --- MATH FUSION SECTION --- */
+        .fusion-wrapper { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; font-size: 1.3rem; font-weight: 700; }
+        .shell-name { padding: 0.7rem 1.4rem; border-radius: 20px; }
+        .noctalia { background: rgba(127, 0, 255, 0.18); color: #be80ff; }
+        .caelestia { background: rgba(0, 255, 204, 0.12); color: #75ffd8; }
+        .noctaelestia { background: linear-gradient(90deg, rgba(127,0,255,0.25), rgba(0,255,204,0.25)); color: #ffffff; border: 1px solid var(--border-color); }
+
+        /* --- ENDPOINT / ABOUT VIEW --- */
+        .endpoint-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+        .endpoint-path {
+            font-family: monospace;
+            color: var(--accent-secondary);
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        .back-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.4rem 1rem;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .about-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .avatar-group { position: relative; width: 85px; height: 85px; }
+        .about-logo { width: 65px; height: 65px; border-radius: 50%; position: absolute; top: 0; left: 0; border: 2px solid var(--accent-primary); }
+        .about-avatar { width: 45px; height: 45px; border-radius: 50%; position: absolute; bottom: 0; right: 0; border: 2px solid var(--accent-secondary); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); }
+        .about-meta h2 { margin-bottom: 0.2rem; font-size: 1.6rem; }
+        .about-handle { color: var(--accent-secondary); font-weight: 600; }
+        .about-body { color: var(--text-secondary); line-height: 1.6; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+        .about-body strong { color: var(--text-primary); }
+        .about-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+        .about-btn { text-decoration: none; padding: 0.8rem 1.4rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; background: var(--accent-primary); color: #ffffff; display: flex; align-items: center; gap: 0.5rem; }
+
+        footer { padding: 2rem; font-size: 0.9rem; color: var(--text-secondary); text-align: center; }
+    </style>
 </head>
 <body>
 
@@ -12,7 +424,6 @@
     <div class="background-glow">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
     </div>
 
     <!-- Caelestia-style Left Trigger Zone & Elastic Side Panel -->
@@ -22,156 +433,122 @@
             <span>›</span>
         </div>
         <div class="panel-content">
-            <div class="panel-header">
-                <img src="assets/logo.png" alt="Noctaelestia Logo" class="panel-logo">
-                <h3>Noctaelestia Panel</h3>
-            </div>
-            
-            <nav class="panel-menu">
-                <a href="#home" class="panel-link nav-route" data-target="home-view">🏠 Home</a>
-                <a href="#about" class="panel-link nav-route" data-target="about-view">ℹ️ /about Endpoint</a>
-                <a href="https://github.com/Chr15zKH4x" target="_blank" rel="noopener" class="panel-link">🐙 GitHub Repository ↗</a>
-            </nav>
-
-            <div class="panel-widgets">
-                <div class="widget-card">
-                    <span class="widget-title">Fluid Engine Status</span>
-                    <span class="widget-badge active">Active Morph</span>
+            <div>
+                <div class="panel-header">
+                    <img src="https://raw.githubusercontent.com/Chr15zKH4x/Noctaelestia/main/assets/logo.png" onError="this.src='https://github.com/Chr15zKH4x.png'" alt="Noctaelestia Logo" class="panel-logo">
+                    <div>
+                        <h3 style="font-size: 1.1rem;">Noctaelestia</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">Elastic Shell Panel</p>
+                    </div>
                 </div>
+                
+                <nav class="panel-menu">
+                    <a class="panel-link nav-route" data-route="/">🏠 Home / Main</a>
+                    <a class="panel-link nav-route" data-route="/about">ℹ️ /about Endpoint</a>
+                    <a href="https://github.com/Chr15zKH4x" target="_blank" rel="noopener" class="panel-link">🐙 GitHub Repo ↗</a>
+                </nav>
+
+                <div class="panel-controls-title">UI Preferences</div>
+                <div class="controls-group">
+                    <button id="mode-btn" class="ctrl-btn">
+                        <span>Appearance</span>
+                        <span id="mode-label">🌙 Dark</span>
+                    </button>
+                    <button id="theme-btn" class="ctrl-btn">
+                        <span>Color Theme</span>
+                        <span id="theme-label" style="color: var(--accent-secondary);">Neon</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="widget-card" style="background: var(--card-bg); padding: 0.9rem; border-radius: 18px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.85rem; color: var(--text-secondary);">Morphing Engine</span>
+                <span style="background: var(--accent-secondary); color: #000; font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 10px; font-weight: 700;">Active</span>
             </div>
         </div>
     </aside>
 
-    <!-- Top Navigation Bar for Themes & Dark/Light mode -->
-    <nav class="top-nav">
-        <div class="nav-brand">
-            <img src="assets/logo.png" alt="Logo" class="nav-logo">
-            <span>Noctaelestia</span>
-        </div>
-        <div class="nav-controls">
-            <button id="theme-btn" class="nav-btn">
-                <span class="btn-icon">🎨</span> Theme: <span id="theme-label">Neon</span>
-            </button>
-            <button id="mode-btn" class="nav-btn">
-                <span class="btn-icon">🌙</span> <span id="mode-label">Dark</span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- MAIN APP VIEWS CONTAINER -->
+    <!-- SPA VIEW CONTAINER -->
     <div class="view-container">
 
-        <!-- HOME VIEW -->
+        <!-- HOME VIEW ( / ) -->
         <section id="home-view" class="view active">
             <header class="branding-header">
                 <div class="logo-wrapper">
-                    <img src="assets/logo.png" alt="Noctaelestia Logo" class="project-logo">
+                    <img src="https://raw.githubusercontent.com/Chr15zKH4x/Noctaelestia/main/assets/logo.png" onError="this.src='https://github.com/Chr15zKH4x.png'" alt="Noctaelestia Logo" class="project-logo">
                 </div>
-                <h1 id="morph-text">Noctaelestia-Shell</h1>
+                <h1>Noctaelestia-Shell</h1>
                 <p class="subtitle">The ultimate liquid-fluid fusion of two terminal worlds.</p>
             </header>
 
-            <main class="container">
-                <!-- The Fusion Equation (Convex Interactive Card) -->
-                <section class="card convex-card math-section">
-                    <div class="fusion-wrapper">
-                        <span class="shell-name noctalia">Noctalia-Shell</span>
-                        <span class="plus">+</span>
-                        <span class="shell-name caelestia">Caelestia-Shell</span>
-                        <span class="equals">=</span>
-                        <span class="shell-name noctaelestia">Noctaelestia-Shell</span>
-                    </div>
-                </section>
+            <section class="card math-section">
+                <div class="fusion-wrapper">
+                    <span class="shell-name noctalia">Noctalia-Shell</span>
+                    <span style="color: var(--text-secondary);">+</span>
+                    <span class="shell-name caelestia">Caelestia-Shell</span>
+                    <span style="color: var(--text-secondary);">=</span>
+                    <span class="shell-name noctaelestia">Noctaelestia-Shell</span>
+                </div>
+            </section>
 
-                <!-- Dynamic Console Terminal Container -->
-                <section class="card terminal-card" id="interactive-terminal">
-                    <div class="terminal-header">
-                        <div class="terminal-dots">
-                            <span class="dot close"></span>
-                            <span class="dot minimize"></span>
-                            <span class="dot maximize"></span>
-                        </div>
-                        <span class="terminal-title">guest@noctaelestia:~</span>
+            <section class="card terminal-card" id="interactive-terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span class="dot close"></span>
+                        <span class="dot minimize"></span>
+                        <span class="dot maximize"></span>
                     </div>
-                    <div class="terminal-body" id="terminal-content">
-                        <p class="terminal-hint">INFO: Type <span class="highlight-cmd">screenshots</span> to view project previews, or <span class="highlight-cmd">/about</span> to open endpoint.</p>
-                        <div class="input-line">
-                            <span class="prompt">noctaelestia $</span>
-                            <input type="text" id="terminal-input" autofocus autocomplete="off" spellcheck="false">
-                        </div>
+                    <span class="terminal-title">guest@noctaelestia:~</span>
+                </div>
+                <div class="terminal-body" id="terminal-content">
+                    <p class="terminal-hint">INFO: Type <span class="highlight-cmd">screenshots</span> to view previews, or <span class="highlight-cmd">/about</span> to switch route.</p>
+                    <div class="input-line">
+                        <span class="prompt">noctaelestia $</span>
+                        <input type="text" id="terminal-input" autofocus autocomplete="off" spellcheck="false">
                     </div>
-                    
-                    <!-- Hidden dynamic gallery frame -->
-                    <div class="gallery-container hidden" id="screenshot-gallery">
-                        <div class="gallery-grid">
-                            <img src="assets/1.png" alt="Screenshot 1" class="gallery-img">
-                            <img src="assets/2.png" alt="Screenshot 2" class="gallery-img">
-                            <img src="assets/3.png" alt="Screenshot 3" class="gallery-img">
-                            <img src="assets/4.png" alt="Screenshot 4" class="gallery-img">
-                        </div>
+                </div>
+                
+                <div class="gallery-container hidden" id="screenshot-gallery">
+                    <div class="gallery-grid">
+                        <div style="background: rgba(255,255,255,0.05); height: 80px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">Preview 1</div>
+                        <div style="background: rgba(255,255,255,0.05); height: 80px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">Preview 2</div>
                     </div>
-                </section>
-
-                <!-- System Specifications Blueprint -->
-                <section class="card convex-card specs-section">
-                    <h2>System Installation Blueprint</h2>
-                    <p class="specs-intro">Deploy the next-generation hybrid interface configuration onto your local Unix setup environment.</p>
-                    
-                    <div class="specs-grid">
-                        <div class="spec-item">
-                            <span class="spec-label">Target Engine OS</span>
-                            <span class="spec-value">Linux</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Core Dependency</span>
-                            <span class="spec-value">Noctalia-Shell v5</span>
-                        </div>
-                    </div>
-
-                    <div class="code-box-container">
-                        <div class="code-box-header">
-                            <span>Installation Directive</span>
-                        </div>
-                        <pre class="code-snippet"><code>mkdir -p ~/.local/state/noctalia && git clone https://github.com/Chr15zKH4x/Noctaelestia.git ~/.local/state/noctalia && killall -9 noctalia && noctalia &</code></pre>
-                    </div>
-                </section>
-            </main>
+                </div>
+            </section>
         </section>
 
-        <!-- ABOUT VIEW (/about Endpoint) -->
+        <!-- ABOUT VIEW ( /about ) -->
         <section id="about-view" class="view">
-            <div class="container endpoint-container">
-                <div class="endpoint-bar">
-                    <span class="endpoint-path">GET /about</span>
-                    <button class="nav-route back-btn" data-target="home-view">← Back to Home</button>
+            <div class="endpoint-bar">
+                <span class="endpoint-path">GET /about</span>
+                <button class="nav-route back-btn" data-route="/">← Back to Home</button>
+            </div>
+
+            <div class="card about-section">
+                <div class="about-header">
+                    <div class="avatar-group">
+                        <img src="https://raw.githubusercontent.com/Chr15zKH4x/Noctaelestia/main/assets/logo.png" onError="this.src='https://github.com/Chr15zKH4x.png'" alt="Noctaelestia Project Logo" class="about-logo">
+                        <img src="https://github.com/Chr15zKH4x.png" alt="Chr15zKH4x GitHub" class="about-avatar">
+                    </div>
+                    <div class="about-meta">
+                        <h2>System Maintainer</h2>
+                        <p class="about-handle">Chris (@Chr15zKH4x)</p>
+                    </div>
                 </div>
 
-                <div class="card convex-card about-section">
-                    <div class="about-header">
-                        <div class="avatar-group">
-                            <img src="assets/logo.png" alt="Noctaelestia Project Logo" class="about-logo">
-                            <img src="https://github.com/Chr15zKH4x.png" alt="Chr15zKH4x GitHub" class="about-avatar">
-                        </div>
-                        <div class="about-meta">
-                            <h2>System Maintainer</h2>
-                            <p class="about-handle">Chris (@Chr15zKH4x)</p>
-                        </div>
-                    </div>
+                <div class="about-body">
+                    <p>
+                        Hey! I'm <strong>Chris</strong>, a 14-year-old developer passionate about technology, systems optimization, Linux desktop environments, and fluid UI experiences.
+                    </p>
+                    <p>
+                        I enjoy tinkering with hardware and software performance — from low-level system administration and C++ modifications to building sleek, responsive web applications. <strong>Noctaelestia</strong> bridges Noctalia-Shell and Caelestia into an integrated, morphing design language.
+                    </p>
+                </div>
 
-                    <div class="about-body">
-                        <p>
-                            Hey! I'm <strong>Chris</strong>, a 14-year-old developer with an endless passion for technology, systems optimization, Linux customization, and creative user interfaces. 
-                        </p>
-                        <p>
-                            I love pushing hardware and software beyond limits — from customizing desktop shells and tweaking mobile systems to building modern interactive web experiences. <strong>Noctaelestia</strong> represents my vision of bridging two powerful shell environments into one fluid, organic interface.
-                        </p>
-                    </div>
-
-                    <div class="about-links">
-                        <a href="https://github.com/Chr15zKH4x" target="_blank" rel="noopener" class="about-btn primary">
-                            🐙 GitHub: github.com/Chr15zKH4x
-                        </a>
-                    </div>
+                <div class="about-links">
+                    <a href="https://github.com/Chr15zKH4x" target="_blank" rel="noopener" class="about-btn">
+                        🐙 GitHub Profile: @Chr15zKH4x
+                    </a>
                 </div>
             </div>
         </section>
@@ -182,6 +559,119 @@
         <p>Powered by GitHub Pages &bull; Noctaelestia © 2026</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- ELASTIC SIDEBAR TOGGLE ---
+            const sidePanel = document.getElementById('side-panel');
+            const hoverZone = document.getElementById('hover-zone');
+            const panelToggle = document.getElementById('panel-toggle');
+
+            function togglePanel() {
+                sidePanel.classList.toggle('open');
+            }
+
+            hoverZone.addEventListener('mouseenter', togglePanel);
+            panelToggle.addEventListener('click', togglePanel);
+            sidePanel.addEventListener('mouseleave', () => {
+                sidePanel.classList.remove('open');
+            });
+
+            // --- ROUTER SYSTEM FOR ENDPOINTS (/ and /about) ---
+            const navRoutes = document.querySelectorAll('.nav-route');
+            const views = {
+                '/': document.getElementById('home-view'),
+                '/about': document.getElementById('about-view')
+            };
+
+            function navigateTo(route) {
+                // Update views
+                Object.keys(views).forEach(r => {
+                    if (r === route) {
+                        views[r].classList.add('active');
+                    } else {
+                        views[r].classList.remove('active');
+                    }
+                });
+
+                // Update active link style
+                navRoutes.forEach(link => {
+                    if (link.getAttribute('data-route') === route) {
+                        link.classList.add('active-link');
+                    } else {
+                        link.classList.remove('active-link');
+                    }
+                });
+
+                // Close panel
+                sidePanel.classList.remove('open');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            navRoutes.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const route = link.getAttribute('data-route');
+                    navigateTo(route);
+                });
+            });
+
+            // --- THEME & MODE SWITCHERS ---
+            const modeBtn = document.getElementById('mode-btn');
+            const modeLabel = document.getElementById('mode-label');
+            const themeBtn = document.getElementById('theme-btn');
+            const themeLabel = document.getElementById('theme-label');
+            const htmlRoot = document.documentElement;
+
+            modeBtn.addEventListener('click', () => {
+                const isDark = htmlRoot.getAttribute('data-mode') === 'dark';
+                htmlRoot.setAttribute('data-mode', isDark ? 'light' : 'dark');
+                modeLabel.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+            });
+
+            const themes = ['neon', 'ocean', 'sunset'];
+            let themeIdx = 0;
+
+            themeBtn.addEventListener('click', () => {
+                themeIdx = (themeIdx + 1) % themes.length;
+                const nextTheme = themes[themeIdx];
+                htmlRoot.setAttribute('data-theme', nextTheme);
+                themeLabel.textContent = nextTheme.charAt(0).toUpperCase() + nextTheme.slice(1);
+            });
+
+            // --- INTERACTIVE TERMINAL ---
+            const terminalInput = document.getElementById('terminal-input');
+            const contentArea = document.getElementById('terminal-content');
+            const galleryContainer = document.getElementById('screenshot-gallery');
+
+            if (terminalInput) {
+                terminalInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const cmd = terminalInput.value.trim().toLowerCase();
+                        terminalInput.value = '';
+
+                        const log = document.createElement('p');
+                        log.style.margin = '0.5rem 0';
+                        log.style.fontSize = '0.9rem';
+
+                        if (cmd === 'screenshots') {
+                            galleryContainer.classList.remove('hidden');
+                            log.style.color = '#00ffcc';
+                            log.innerText = '» Displaying project gallery...';
+                            contentArea.insertBefore(log, terminalInput.parentElement);
+                        } else if (cmd === '/about' || cmd === 'about') {
+                            log.style.color = '#00ffcc';
+                            log.innerText = '» Routing to /about endpoint...';
+                            contentArea.insertBefore(log, terminalInput.parentElement);
+                            setTimeout(() => navigateTo('/about'), 400);
+                        } else {
+                            log.style.color = '#ff5f56';
+                            log.innerText = `bash: command not found: ${cmd}`;
+                            contentArea.insertBefore(log, terminalInput.parentElement);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
