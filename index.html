@@ -14,8 +14,11 @@
         <div class="blob blob-2"></div>
     </div>
 
-    <header>
-        <!-- Morphing title wrapper -->
+    <!-- Top Centered Branding Header -->
+    <header class="branding-header">
+        <div class="logo-wrapper">
+            <img src="assets/logo.png" alt="Noctaelestia Logo" class="project-logo">
+        </div>
         <h1 id="morph-text">Noctaelestia-Shell</h1>
         <p class="subtitle">The ultimate fusion of two terminal worlds.</p>
     </header>
@@ -32,14 +35,56 @@
             </div>
         </section>
 
-        <!-- About Section -->
-        <section class="card convex-card">
-            <h2>About the Project</h2>
-            <p>Welcome to the official hub of <strong>Noctaelestia-Shell</strong>. This custom environment is born from the perfect synergy between the dark, mystical aesthetics of <em>Noctalia</em> and the pristine, high-performance celestial design of <em>Caelestia</em>.</p>
-            <div class="features">
-                <div class="mini-card">⚡ Blazing Fast</div>
-                <div class="mini-card">🎨 Fully Tailored UI</div>
-                <div class="mini-card">🌌 Hybrid Interface</div>
+        <!-- Dynamic Console Terminal Container -->
+        <section class="card terminal-card" id="interactive-terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <span class="dot close"></span>
+                    <span class="dot minimize"></span>
+                    <span class="dot maximize"></span>
+                </div>
+                <span class="terminal-title">guest@noctaelestia:~</span>
+            </div>
+            <div class="terminal-body" id="terminal-content">
+                <p class="terminal-hint">INFO: Type <span class="highlight-cmd">screenshots</span> to view project previews.</p>
+                <div class="input-line">
+                    <span class="prompt">noctaelestia $</span>
+                    <input type="text" id="terminal-input" autofocus autocomplete="off" spellcheck="false">
+                </div>
+            </div>
+            
+            <!-- Hidden dynamic gallery frame triggered via system script -->
+            <div class="gallery-container hidden" id="screenshot-gallery">
+                <div class="gallery-grid">
+                    <img src="assets/1.png" alt="Screenshot 1" class="gallery-img">
+                    <img src="assets/2.png" alt="Screenshot 2" class="gallery-img">
+                    <img src="assets/3.png" alt="Screenshot 3" class="gallery-img">
+                    <img src="assets/4.png" alt="Screenshot 4" class="gallery-img">
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation & Specifications Blueprint -->
+        <section class="card convex-card specs-section">
+            <h2>System Installation Blueprint</h2>
+            <p class="specs-intro">Deploy the next-generation hybrid interface configuration onto your local Unix setup environment.</p>
+            
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <span class="spec-label">Target Engine OS</span>
+                    <span class="spec-value">Linux</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Core Dependency</span>
+                    <span class="spec-value">Noctalia-Shell v5</span>
+                </div>
+            </div>
+
+            <div class="code-box-container">
+                <div class="code-box-header">
+                    <span>Installation Directive</span>
+                </div>
+                <pre class="code-snippet"><code>mkdir -p ~/.local/state/noctalia && git clone https://github.com/Chr15zKH4x/Noctaelestia.git ~/.local/state/noctalia && killall -9 noctalia && noctalia &</code></pre>
             </div>
         </section>
     </main>
