@@ -20,6 +20,7 @@ clear
 echo -e "${PURPLE}${BOLD}"
 cat << "EOF"
   _  _         _              _         _   _ 
+
  | \| |___  __| |_ __ _ ___| |___ ___| |_(_)__ _ 
  | .` / _ \/ _|  _/ _` / -_) / -_|_-<  _| / _` |
  |_|\_\___/\__|\__\__,_\___|_|\___/__/\__|_|\__,_|
@@ -71,9 +72,9 @@ else
     echo -e "${GREEN}[+] yay is already installed.${RESET}"
 fi
 
-# --- STEP 3: HYPRLAND, ALACRITTY, SATTY & HYPRSHOT ---
-echo -e "${CYAN}==> [3/7] Installing Hyprland, Alacritty, Satty, and Hyprshot...${RESET}"
-sudo pacman -S --needed --noconfirm hyprland alacritty satty hyprshot
+# --- STEP 3: HYPRLAND, ALACRITTY, SATTY, HYPRSHOT & MPV ---
+echo -e "${CYAN}==> [3/7] Installing Hyprland, Alacritty, Satty, Hyprshot, and mpv...${RESET}"
+sudo pacman -S --needed --noconfirm hyprland alacritty satty hyprshot mpv
 
 # --- STEP 4: NOCTALIA & GREETD ---
 echo -e "${CYAN}==> [4/7] Installing Noctalia-Shell and greetd display manager...${RESET}"
@@ -139,6 +140,15 @@ if [ -d "$HOME/Noctaelestia/hypr" ]; then
     echo -e "${GREEN}[+] Successfully moved ~/Noctaelestia/hypr to ~/.config/hypr!${RESET}"
 else
     echo -e "${YELLOW}[!] Warning: ~/Noctaelestia/hypr directory not found.${RESET}"
+fi
+
+# Copy ~/Noctaelestia/mpv to ~/.config/mpv
+if [ -d "$HOME/Noctaelestia/mpv" ]; then
+    rm -rf ~/.config/mpv
+    cp -r "$HOME/Noctaelestia/mpv" ~/.config/
+    echo -e "${GREEN}[+] Successfully copied ~/Noctaelestia/mpv to ~/.config/mpv!${RESET}"
+else
+    echo -e "${YELLOW}[!] Warning: ~/Noctaelestia/mpv directory not found in the repository.${RESET}"
 fi
 
 # Ensure ~/.local/state/noctalia exists and copy remaining repository files into it
