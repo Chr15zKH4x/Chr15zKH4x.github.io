@@ -54,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Gestion directe des clics sur les boutons de navigation
     navRoutes.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -91,7 +90,42 @@ document.addEventListener('DOMContentLoaded', () => {
         themeLabel.textContent = nextTheme.charAt(0).toUpperCase() + nextTheme.slice(1);
     });
 
-    // --- INTERACTIVE TERMINAL WITH ELASTIC MORPHING ---
+    // --- FULLSCREEN LIGHTBOX MODAL ---
+    const lightboxModal = document.getElementById('lightbox-modal');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxClose = document.getElementById('lightbox-close');
+    const galleryImages = document.querySelectorAll('.gallery-img');
+
+    galleryImages.forEach(img => {
+        img.addEventListener('click', () => {
+            lightboxImg.src = img.src;
+            lightboxModal.classList.add('active');
+        });
+    });
+
+    function closeLightbox() {
+        lightboxModal.classList.remove('active');
+    }
+
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+    }
+
+    if (lightboxModal) {
+        lightboxModal.addEventListener('click', (e) => {
+            if (e.target === lightboxModal) {
+                closeLightbox();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightboxModal && lightboxModal.classList.contains('active')) {
+            closeLightbox();
+        }
+    });
+
+    // --- INTERACTIVE TERMINAL (SCREENSHOTS & EXIT) ---
     const terminalInput = document.getElementById('terminal-input');
     const terminalContainer = document.getElementById('interactive-terminal');
     const galleryContainer = document.getElementById('screenshot-gallery');
@@ -113,6 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     log.style.color = '#00ffcc';
                     log.innerText = '» Liquid morphing engaged. Displaying gallery...';
                     contentArea.insertBefore(log, terminalInput.parentElement);
+                } else if (command === 'exit') {
+                    terminalContainer.classList.remove('active-pill-morph');
+                    galleryContainer.classList.add('hidden');
+                    log.style.color = '#ffbd2e';
+                    log.innerText = '» Closed gallery. Morphing state restored.';
+                    contentArea.insertBefore(log, terminalInput.parentElement);
                 } else if (command === '/about' || command === 'about') {
                     log.style.color = '#00ffcc';
                     log.innerText = '» Routing to /about endpoint...';
@@ -120,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => navigateTo('/about'), 400);
                 } else {
                     log.style.color = '#ff5f56';
-                    log.innerText = `bash: command not found: ${command}. Try 'screenshots' or '/about'.`;
+                    log.innerText = `bash: command not found: ${command}. Try 'screenshots', 'exit', or '/about'.`;
                     contentArea.insertBefore(log, terminalInput.parentElement);
                 }
             }
