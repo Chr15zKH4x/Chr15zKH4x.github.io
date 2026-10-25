@@ -9,7 +9,7 @@
 
 :root {
     --bg-color: #0b0817;
-    --panel-bg: rgba(13, 10, 27, 0.9);
+    --panel-bg: rgba(13, 10, 27, 0.92);
     --card-bg: rgba(255, 255, 255, 0.03);
     --text-primary: #f1f1f7;
     --text-secondary: #a0a0cc;
@@ -24,7 +24,7 @@
 
 [data-mode="light"] {
     --bg-color: #eef2f7;
-    --panel-bg: rgba(255, 255, 255, 0.92);
+    --panel-bg: rgba(255, 255, 255, 0.95);
     --card-bg: rgba(255, 255, 255, 0.75);
     --text-primary: #1a1a2e;
     --text-secondary: #5a5a7a;
@@ -111,7 +111,7 @@ body {
     border-radius: 0 35px 35px 0;
     z-index: 100;
     box-shadow: 25px 0 60px rgba(0, 0, 0, 0.5);
-    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .side-panel.open {
@@ -175,17 +175,20 @@ body {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     font-weight: 600;
+    font-size: 0.95rem;
     display: flex;
     align-items: center;
     gap: 0.8rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 100%;
+    text-align: left;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .panel-link:hover, .panel-link.active-link {
     background: var(--accent-primary);
     color: #ffffff;
-    transform: translateX(6px);
+    transform: translateX(8px) scale(1.02);
     border-color: var(--accent-secondary);
 }
 
@@ -215,6 +218,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    transition: all 0.3s ease;
 }
 
 .ctrl-btn:hover {
@@ -241,7 +245,7 @@ body {
     font-weight: 700;
 }
 
-/* --- SPA VIEW SYSTEM --- */
+/* --- SPA VIEW SYSTEM WITH SMOOTH MORPH TRANSITION --- */
 .view-container {
     width: 100%;
     display: flex;
@@ -255,16 +259,15 @@ body {
     width: 100%;
     flex-direction: column;
     align-items: center;
-    animation: fadeInView 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .view.active {
     display: flex;
-}
-
-@keyframes fadeInView {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 /* --- BRANDING HEADER --- */
@@ -333,17 +336,23 @@ h1 {
     backdrop-filter: blur(16px);
     border: 1px solid var(--border-color);
     box-shadow: var(--convex-shadow);
-    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), border-radius 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s ease;
 }
 
 .card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-4px) scale(1.005);
 }
 
-/* --- TERMINAL --- */
+/* --- TERMINAL WITH ELASTIC MORPHING --- */
 .terminal-card {
     background: rgba(13, 10, 28, 0.8);
     border-color: rgba(127, 0, 255, 0.2);
+}
+
+.terminal-card.active-pill-morph {
+    border-radius: 55px 35px 65px 45px / 45px 55px 35px 65px;
+    border-color: var(--accent-secondary);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 255, 204, 0.15);
 }
 
 .terminal-header {
@@ -384,14 +393,31 @@ h1 {
     font-family: monospace;
 }
 
+/* FLUID GALLERY ANIMATION (WATER-LIKE STRETCH) */
 .gallery-container {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border-color);
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: max-height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
 }
-.gallery-container.hidden { display: none; }
+
+.gallery-container.hidden {
+    max-height: 0;
+    padding-top: 0;
+    margin-top: 0;
+    border-top: none;
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    pointer-events: none;
+}
+
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.2rem; }
-.gallery-img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 20px; border: 1px solid var(--border-color); }
+.gallery-img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 20px; border: 1px solid var(--border-color); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.gallery-img:hover { transform: scale(1.06) rotate(1deg); border-color: var(--accent-secondary); }
 
 /* Math section & Specs */
 .fusion-wrapper { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.2rem; font-size: 1.4rem; font-weight: 700; }
