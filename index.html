@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="neon" data-mode="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,86 +8,175 @@
 </head>
 <body>
 
-    <!-- Morphing glowing blobs in the background -->
+    <!-- Fluid Background Glow Blobs -->
     <div class="background-glow">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
-    <!-- Top Centered Branding Header -->
-    <header class="branding-header">
-        <div class="logo-wrapper">
-            <img src="assets/logo.png" alt="Noctaelestia Logo" class="project-logo">
+    <!-- Caelestia-style Left Trigger Zone & Elastic Side Panel -->
+    <div class="left-hover-zone" id="hover-zone"></div>
+    <aside class="side-panel" id="side-panel">
+        <div class="panel-handle" id="panel-toggle">
+            <span>›</span>
         </div>
-        <h1 id="morph-text">Noctaelestia-Shell</h1>
-        <p class="subtitle">The ultimate fusion of two terminal worlds.</p>
-    </header>
-
-    <main class="container">
-        <!-- The Fusion Equation (Convex / Claymorphism Style) -->
-        <section class="card convex-card math-section">
-            <div class="fusion-wrapper">
-                <span class="shell-name noctalia">Noctalia-Shell</span>
-                <span class="plus">+</span>
-                <span class="shell-name caelestia">Caelestia-Shell</span>
-                <span class="equals">=</span>
-                <span class="shell-name noctaelestia">Noctaelestia-Shell</span>
-            </div>
-        </section>
-
-        <!-- Dynamic Console Terminal Container -->
-        <section class="card terminal-card" id="interactive-terminal">
-            <div class="terminal-header">
-                <div class="terminal-dots">
-                    <span class="dot close"></span>
-                    <span class="dot minimize"></span>
-                    <span class="dot maximize"></span>
-                </div>
-                <span class="terminal-title">guest@noctaelestia:~</span>
-            </div>
-            <div class="terminal-body" id="terminal-content">
-                <p class="terminal-hint">INFO: Type <span class="highlight-cmd">screenshots</span> to view project previews.</p>
-                <div class="input-line">
-                    <span class="prompt">noctaelestia $</span>
-                    <input type="text" id="terminal-input" autofocus autocomplete="off" spellcheck="false">
-                </div>
+        <div class="panel-content">
+            <div class="panel-header">
+                <img src="assets/logo.png" alt="Noctaelestia Logo" class="panel-logo">
+                <h3>Noctaelestia Panel</h3>
             </div>
             
-            <!-- Hidden dynamic gallery frame triggered via system script -->
-            <div class="gallery-container hidden" id="screenshot-gallery">
-                <div class="gallery-grid">
-                    <img src="assets/1.png" alt="Screenshot 1" class="gallery-img">
-                    <img src="assets/2.png" alt="Screenshot 2" class="gallery-img">
-                    <img src="assets/3.png" alt="Screenshot 3" class="gallery-img">
-                    <img src="assets/4.png" alt="Screenshot 4" class="gallery-img">
+            <nav class="panel-menu">
+                <a href="#home" class="panel-link nav-route" data-target="home-view">🏠 Home</a>
+                <a href="#about" class="panel-link nav-route" data-target="about-view">ℹ️ /about Endpoint</a>
+                <a href="https://github.com/Chr15zKH4x" target="_blank" rel="noopener" class="panel-link">🐙 GitHub Repository ↗</a>
+            </nav>
+
+            <div class="panel-widgets">
+                <div class="widget-card">
+                    <span class="widget-title">Fluid Engine Status</span>
+                    <span class="widget-badge active">Active Morph</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Top Navigation Bar for Themes & Dark/Light mode -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <img src="assets/logo.png" alt="Logo" class="nav-logo">
+            <span>Noctaelestia</span>
+        </div>
+        <div class="nav-controls">
+            <button id="theme-btn" class="nav-btn">
+                <span class="btn-icon">🎨</span> Theme: <span id="theme-label">Neon</span>
+            </button>
+            <button id="mode-btn" class="nav-btn">
+                <span class="btn-icon">🌙</span> <span id="mode-label">Dark</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN APP VIEWS CONTAINER -->
+    <div class="view-container">
+
+        <!-- HOME VIEW -->
+        <section id="home-view" class="view active">
+            <header class="branding-header">
+                <div class="logo-wrapper">
+                    <img src="assets/logo.png" alt="Noctaelestia Logo" class="project-logo">
+                </div>
+                <h1 id="morph-text">Noctaelestia-Shell</h1>
+                <p class="subtitle">The ultimate liquid-fluid fusion of two terminal worlds.</p>
+            </header>
+
+            <main class="container">
+                <!-- The Fusion Equation (Convex Interactive Card) -->
+                <section class="card convex-card math-section">
+                    <div class="fusion-wrapper">
+                        <span class="shell-name noctalia">Noctalia-Shell</span>
+                        <span class="plus">+</span>
+                        <span class="shell-name caelestia">Caelestia-Shell</span>
+                        <span class="equals">=</span>
+                        <span class="shell-name noctaelestia">Noctaelestia-Shell</span>
+                    </div>
+                </section>
+
+                <!-- Dynamic Console Terminal Container -->
+                <section class="card terminal-card" id="interactive-terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="dot close"></span>
+                            <span class="dot minimize"></span>
+                            <span class="dot maximize"></span>
+                        </div>
+                        <span class="terminal-title">guest@noctaelestia:~</span>
+                    </div>
+                    <div class="terminal-body" id="terminal-content">
+                        <p class="terminal-hint">INFO: Type <span class="highlight-cmd">screenshots</span> to view project previews, or <span class="highlight-cmd">/about</span> to open endpoint.</p>
+                        <div class="input-line">
+                            <span class="prompt">noctaelestia $</span>
+                            <input type="text" id="terminal-input" autofocus autocomplete="off" spellcheck="false">
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden dynamic gallery frame -->
+                    <div class="gallery-container hidden" id="screenshot-gallery">
+                        <div class="gallery-grid">
+                            <img src="assets/1.png" alt="Screenshot 1" class="gallery-img">
+                            <img src="assets/2.png" alt="Screenshot 2" class="gallery-img">
+                            <img src="assets/3.png" alt="Screenshot 3" class="gallery-img">
+                            <img src="assets/4.png" alt="Screenshot 4" class="gallery-img">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- System Specifications Blueprint -->
+                <section class="card convex-card specs-section">
+                    <h2>System Installation Blueprint</h2>
+                    <p class="specs-intro">Deploy the next-generation hybrid interface configuration onto your local Unix setup environment.</p>
+                    
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">Target Engine OS</span>
+                            <span class="spec-value">Linux</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Core Dependency</span>
+                            <span class="spec-value">Noctalia-Shell v5</span>
+                        </div>
+                    </div>
+
+                    <div class="code-box-container">
+                        <div class="code-box-header">
+                            <span>Installation Directive</span>
+                        </div>
+                        <pre class="code-snippet"><code>mkdir -p ~/.local/state/noctalia && git clone https://github.com/Chr15zKH4x/Noctaelestia.git ~/.local/state/noctalia && killall -9 noctalia && noctalia &</code></pre>
+                    </div>
+                </section>
+            </main>
+        </section>
+
+        <!-- ABOUT VIEW (/about Endpoint) -->
+        <section id="about-view" class="view">
+            <div class="container endpoint-container">
+                <div class="endpoint-bar">
+                    <span class="endpoint-path">GET /about</span>
+                    <button class="nav-route back-btn" data-target="home-view">← Back to Home</button>
+                </div>
+
+                <div class="card convex-card about-section">
+                    <div class="about-header">
+                        <div class="avatar-group">
+                            <img src="assets/logo.png" alt="Noctaelestia Project Logo" class="about-logo">
+                            <img src="https://github.com/Chr15zKH4x.png" alt="Chr15zKH4x GitHub" class="about-avatar">
+                        </div>
+                        <div class="about-meta">
+                            <h2>System Maintainer</h2>
+                            <p class="about-handle">Chris (@Chr15zKH4x)</p>
+                        </div>
+                    </div>
+
+                    <div class="about-body">
+                        <p>
+                            Hey! I'm <strong>Chris</strong>, a 14-year-old developer with an endless passion for technology, systems optimization, Linux customization, and creative user interfaces. 
+                        </p>
+                        <p>
+                            I love pushing hardware and software beyond limits — from customizing desktop shells and tweaking mobile systems to building modern interactive web experiences. <strong>Noctaelestia</strong> represents my vision of bridging two powerful shell environments into one fluid, organic interface.
+                        </p>
+                    </div>
+
+                    <div class="about-links">
+                        <a href="https://github.com/Chr15zKH4x" target="_blank" rel="noopener" class="about-btn primary">
+                            🐙 GitHub: github.com/Chr15zKH4x
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Installation & Specifications Blueprint -->
-        <section class="card convex-card specs-section">
-            <h2>System Installation Blueprint</h2>
-            <p class="specs-intro">Deploy the next-generation hybrid interface configuration onto your local Unix setup environment.</p>
-            
-            <div class="specs-grid">
-                <div class="spec-item">
-                    <span class="spec-label">Target Engine OS</span>
-                    <span class="spec-value">Linux</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Core Dependency</span>
-                    <span class="spec-value">Noctalia-Shell v5</span>
-                </div>
-            </div>
-
-            <div class="code-box-container">
-                <div class="code-box-header">
-                    <span>Installation Directive</span>
-                </div>
-                <pre class="code-snippet"><code>mkdir -p ~/.local/state/noctalia && git clone https://github.com/Chr15zKH4x/Noctaelestia.git ~/.local/state/noctalia && killall -9 noctalia && noctalia &</code></pre>
-            </div>
-        </section>
-    </main>
+    </div>
 
     <footer>
         <p>Powered by GitHub Pages &bull; Noctaelestia © 2026</p>
