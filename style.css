@@ -1,4 +1,4 @@
-/* Reset & Global Tokens */
+/* Reset & Global Design Tokens */
 * {
     margin: 0;
     padding: 0;
@@ -17,7 +17,7 @@ body {
     justify-content: space-between;
 }
 
-/* --- BACKGROUND MORPHING BLOBS --- */
+/* --- BACKGROUND MORPHING GLOWS --- */
 .background-glow {
     position: fixed;
     top: 0;
@@ -33,7 +33,7 @@ body {
     background: linear-gradient(45deg, #ff007f, #7f00ff);
     border-radius: 50%;
     opacity: 0.35;
-    animation: morphing 14s infinite alternate ease-in-out;
+    animation: backgroundMorph 14s infinite alternate ease-in-out;
 }
 
 .blob-1 {
@@ -53,16 +53,47 @@ body {
     background: linear-gradient(45deg, #ec008c, #fc6767);
 }
 
-@keyframes morphing {
+@keyframes backgroundMorph {
     0% { border-radius: 42% 58% 62% 38% / 45% 45% 55% 55%; transform: translate(0, 0) rotate(0deg); }
     50% { border-radius: 65% 35% 38% 62% / 50% 62% 38% 50%; transform: translate(60px, 40px) rotate(180deg); }
     100% { border-radius: 38% 62% 48% 52% / 62% 38% 65% 35%; transform: translate(-30px, 60px) rotate(360deg); }
 }
 
-/* --- CONVEX & ULTRA-ROUNDED CARDS --- */
-header {
+/* --- CENTER BRANDING WITH LOGO SPACE --- */
+.branding-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 4rem 1rem 1rem;
+    padding: 5rem 1rem 1rem;
+    width: 100%;
+}
+
+.logo-wrapper {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.3),
+        inset 0 8px 16px rgba(255, 255, 255, 0.03);
+    animation: floatLogo 6s infinite ease-in-out;
+}
+
+.project-logo {
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
+}
+
+@keyframes floatLogo {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
 }
 
 h1 {
@@ -86,28 +117,147 @@ h1 {
     padding: 2rem;
 }
 
-/* Convex / Claymorphism Depth Grid */
+/* --- CONVEX & ULTRA-ROUNDED CARDS --- */
 .card {
     background: rgba(255, 255, 255, 0.03);
-    border-radius: 35px; /* Highly rounded corners */
+    border-radius: 35px;
     padding: 2.5rem;
     margin-bottom: 2.5rem;
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    
-    /* Layered external and internal shadows for the smooth convex look */
     box-shadow: 
         0 25px 50px rgba(0, 0, 0, 0.4),
         inset 0 12px 24px rgba(255, 255, 255, 0.04),
         inset 0 -12px 24px rgba(0, 0, 0, 0.35);
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.card:hover {
-    transform: translateY(-6px);
+/* --- DYNAMIC INTERACTIVE PILL CONSOLE --- */
+.terminal-card {
+    background: rgba(13, 10, 28, 0.7);
+    border-color: rgba(127, 0, 255, 0.2);
 }
 
-/* Shell Formula Visuals */
+/* Triggered Advanced Pill State Mutation */
+.terminal-card.active-pill-morph {
+    border-radius: 60px 40px 70px 50px / 50px 60px 40px 70px;
+    background: rgba(20, 15, 45, 0.65);
+    border-color: rgba(0, 255, 204, 0.3);
+    animation: smoothPillMorph 8s infinite alternate ease-in-out;
+    box-shadow: 
+        0 35px 60px rgba(0, 0, 0, 0.5),
+        inset 0 15px 30px rgba(0, 255, 204, 0.05),
+        inset 0 -15px 30px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes smoothPillMorph {
+    0% { border-radius: 60px 40px 70px 50px / 50px 60px 40px 70px; }
+    50% { border-radius: 45px 65px 45px 65px / 60px 45px 65px 45px; }
+    100% { border-radius: 70px 50px 55px 60px / 50px 65px 45px 60px; }
+}
+
+.terminal-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.8rem;
+}
+
+.terminal-dots {
+    display: flex;
+    gap: 0.5rem;
+    margin-right: 1rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.close { background: #ff5f56; }
+.minimize { background: #ffbd2e; }
+.maximize { background: #27c93f; }
+
+.terminal-title {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.terminal-hint {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.highlight-cmd {
+    color: #00ffcc;
+    font-weight: 700;
+    background: rgba(0, 255, 204, 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+}
+
+.input-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.prompt {
+    color: #7f00ff;
+    font-weight: bold;
+}
+
+#terminal-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #00ffcc;
+    font-size: 1rem;
+    flex-grow: 1;
+    font-family: monospace;
+}
+
+/* Morphing Media Shell Layout */
+.gallery-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.5s ease;
+}
+
+.gallery-container.hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.2rem;
+}
+
+.gallery-img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    object-fit: cover;
+    border-radius: 20px; /* Highly rounded pill image style */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.gallery-img:hover {
+    transform: scale(1.05) rotate(1deg);
+    border-color: #00ffcc;
+}
+
+/* --- SHELL MATH FORMULA LAYOUT --- */
 .fusion-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -120,7 +270,7 @@ h1 {
 
 .shell-name {
     padding: 0.8rem 1.6rem;
-    border-radius: 22px; /* Pill layout */
+    border-radius: 22px;
     box-shadow: inset 0 4px 12px rgba(255, 255, 255, 0.08);
 }
 
@@ -132,37 +282,73 @@ h1 {
     border: 1px solid rgba(255,255,255,0.15);
 }
 
-.plus, .equals {
-    color: #64748b;
-}
+.plus, .equals { color: #64748b; }
 
-/* Inner card layouts */
+/* --- BLUEPRINT DESIGN PANEL --- */
 h2 {
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.5rem;
     font-size: 1.7rem;
     color: #ffffff;
 }
 
-p {
-    line-height: 1.7;
-    color: #cbd5e1;
-    font-size: 1.05rem;
+.specs-intro {
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
 }
 
-.features {
-    display: flex;
+.specs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    margin-top: 1.8rem;
-    flex-wrap: wrap;
+    margin-bottom: 2rem;
 }
 
-.mini-card {
-    background: rgba(255, 255, 255, 0.04);
-    padding: 0.7rem 1.3rem;
-    border-radius: 16px;
+.spec-item {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.spec-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.spec-value {
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.code-box-container {
+    background: #090714;
+    border-radius: 20px;
+    border: 1px solid rgba(127, 0, 255, 0.3);
+    overflow: hidden;
+}
+
+.code-box-header {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+    color: #64748b;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.code-snippet {
+    padding: 1.2rem;
+    overflow-x: auto;
+}
+
+.code-snippet code {
+    font-family: 'Courier New', Courier, monospace;
+    color: #ff007f;
     font-size: 0.95rem;
-    font-weight: 500;
-    box-shadow: inset 2px 2px 6px rgba(255,255,255,0.03), 2px 5px 12px rgba(0,0,0,0.2);
 }
 
 footer {
