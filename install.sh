@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 #
 # Noctaelestia-Shell & Hyprland Minimal Installer Script
 # Author: Chris (@Chr15zKH4x)
