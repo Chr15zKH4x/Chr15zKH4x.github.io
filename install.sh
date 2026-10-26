@@ -75,7 +75,7 @@ fi
 
 # --- STEP 3: HYPRLAND, ALACRITTY, SATTY, HYPRSHOT, MPV, ETC...---
 echo -e "${CYAN}==> [3/8] Installing Hyprland, Alacritty, Satty, Hyprshot, and mpv...${RESET}"
-sudo pacman -S --needed --noconfirm hyprland alacritty satty hyprshot mpv thunar gvfs nano cpupower
+sudo pacman -S --needed --noconfirm hyprland alacritty satty hyprshot mpv thunar gvfs nano cpupower pamixer htop brightnessctl
 
 # --- STEP 4: NOCTALIA & GREETD ---
 echo -e "${CYAN}==> [4/8] Installing Noctalia-Shell and greetd display manager...${RESET}"
@@ -115,6 +115,7 @@ echo -e "${CYAN}==> [7/8] Configuring MPD and setting up mpd-mpris user service.
 
 # Création des dossiers et fichiers nécessaires avec $HOME
 mkdir -p "$HOME/.config/mpd/playlists"
+mkdir -p "$HOME/Music"
 touch "$HOME/.config/mpd/mpd.pid"
 touch "$HOME/.config/mpd/mpd.db"
 touch "$HOME/.config/mpd/mpdstate"
@@ -125,6 +126,7 @@ pid_file "$HOME/.config/mpd/mpd.pid"
 db_file "$HOME/.config/mpd/mpd.db"
 state_file "$HOME/.config/mpd/mpdstate"
 playlist_directory "$HOME/.config/mpd/playlists"
+music_directory "$HOME/Music"
 
 audio_output {
     type "pipewire"
@@ -147,7 +149,7 @@ After=mpd.service
 Requires=mpd.service
 
 [Service]
-ExecStart=/usr/bin/mpd-mpris -host 127.0.0.1 -port 6600
+ExecStart=/usr/bin/mpd-mpris
 Restart=always
 RestartSec=3
 
