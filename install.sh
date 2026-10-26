@@ -38,8 +38,8 @@ fi
 
 # Initial user confirmation
 read -p "Do you want to start the Noctaelestia installation? [Y/n] " choice
-case "$choice" in 
-  [yY][eE][sS]|[yY]|"") 
+case "$choice" in
+  y|Y|yes|YES|"")
     echo -e "${GREEN}[+] Starting deployment...${RESET}\n"
     ;;
   *)
@@ -47,6 +47,7 @@ case "$choice" in
     exit 0
     ;;
 esac
+
 
 # Elevate privileges early
 sudo -v
