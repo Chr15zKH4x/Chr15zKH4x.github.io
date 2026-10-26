@@ -52,7 +52,7 @@ esac
 sudo -v
 
 # --- STEP 1: BASE DEPENDENCIES & FONTS ---
-echo -e "${CYAN}==> [1/7] Installing base dependencies and required fonts...${RESET}"
+echo -e "${CYAN}==> [1/8] Installing base dependencies and required fonts...${RESET}"
 sudo pacman -Sy --needed --noconfirm \
     git base-devel python wget curl \
     ttf-font-awesome noto-fonts-emoji \
@@ -61,49 +61,39 @@ sudo pacman -Sy --needed --noconfirm \
 
 # --- STEP 2: INSTALL YAY ---
 if ! command -v yay &> /dev/null; then
-    echo -e "${CYAN}==> [2/7] Installing yay-bin from AUR...${RESET}"
-    cd ~
+    echo -e "${CYAN}==> [2/8] Installing yay-bin from AUR...${RESET}"
+    cd "$HOME"
     rm -rf yay-bin
     git clone https://aur.archlinux.org/yay-bin.git
     cd yay-bin
     makepkg -si --noconfirm
-    cd ~
+    cd "$HOME"
 else
     echo -e "${GREEN}[+] yay is already installed.${RESET}"
 fi
 
-# --- STEP 3: HYPRLAND, ALACRITTY, SATTY, HYPRSHOT & MPV ---
-echo -e "${CYAN}==> [3/7] Installing Hyprland, Alacritty, Satty, Hyprshot, and mpv...${RESET}"
-sudo pacman -S --needed --noconfirm hyprland alacritty satty hyprshot mpv
+# --- STEP 3: HYPRLAND, ALACRITTY, SATTY, HYPRSHOT, MPV, ETC...---
+echo -e "${CYAN}==> [3/8] Installing Hyprland, Alacritty, Satty, Hyprshot, and mpv...${RESET}"
+sudo pacman -S --needed --noconfirm hyprland alacritty satty hyprshot mpv thunar gvfs nano cpupower
 
 # --- STEP 4: NOCTALIA & GREETD ---
-echo -e "${CYAN}==> [4/7] Installing Noctalia-Shell and greetd display manager...${RESET}"
+echo -e "${CYAN}==> [4/8] Installing Noctalia-Shell and greetd display manager...${RESET}"
 sudo pacman -S --needed --noconfirm noctalia greetd
 
 echo -e "${CYAN}==> Installing Noctalia Greeter via yay...${RESET}"
 yay -S --needed --noconfirm noctalia-greeter || yay -S --needed --noconfirm noctalia-greeter
 
 # --- STEP 5: CONFIGURE GREETD VIA PYTHON ---
-echo -e "${CYAN}==> [5/7] Writing /etc/greetd/config.toml...${RESET}"
+echo -e "${CYAN}==> [5/8] Writing /etc/greetd/config.toml...${RESET}"
 
 sudo python3 -c '
 import os
 
 config_content = """[terminal]
-# The VT to run the greeter on. Can be "next", "current" or a number
-# designating the VT.
 vt = 1
 
-# The default session, also known as the greeter.
 [default_session]
-
-# `agreety` is the bundled agetty/login-lookalike. You can replace `/bin/sh`
-# with whatever you want started, such as `sway`.
 command = "/usr/bin/noctalia-greeter-session"
-
-# The user to run the command as. The privileges this user must have depends
-# on the greeter. A graphical greeter may for example require the user to be
-# in the `video` group.
 user = "greeter"
 """
 
@@ -115,60 +105,142 @@ print("[+] Updated /etc/greetd/config.toml successfully.")
 
 sudo systemctl enable greetd.service
 
-# --- STEP 6: CLI TOOLS ---
-echo -e "${CYAN}==> [6/7] Installing CLI utilities (yazi, ytfzf, fzf, cava, cbonsai, etc.)...${RESET}"
-yay -S --needed --noconfirm yazi cmatrix-git ytfzf fzf cava cbonsai tty-clock fastfetch youtui-player
+# --- STEP 6: CLI TOOLS & MEDIA ---
+echo -e "${CYAN}==> [6/8] Installing CLI utilities & MPD ecosystem...${RESET}"
+yay -S --needed --noconfirm yazi cmatrix-git ytfzf fzf cava cbonsai tty-clock fastfetch youtui-player mpd-mpris mpd mpc
 
-# --- STEP 7: CLONE NOCTAELESTIA & DEPLOY CONFIGURATIONS ---
-echo -e "${CYAN}==> [7/7] Cloning Noctaelestia and deploying configurations...${RESET}"
+# --- STEP 7: MPD CONFIG & MPRIS USER SERVICE ---
+echo -e "${CYAN}==> [7/8] Configuring MPD and setting up mpd-mpris user service...${RESET}"
 
-# Clone the repository to ~/Noctaelestia
+# Création des dossiers et fichiers nécessaires avec $HOME
+mkdir -p "$HOME/.config/mpd/playlists"
+touch "$HOME/.config/mpd/mpd.pid"
+touch "$HOME/.config/mpd/mpd.db"
+touch "$HOME/.config/mpd/mpdstate"
+
+# Écriture de mpd.conf exactement selon la capture d'écran
+cat << 'EOF' > "$HOME/.config/mpd/mpd.conf"
+pid_file "$HOME/.config/mpd/mpd.pid"
+db_file "$HOME/.config/mpd/mpd.db"
+state_file "$HOME/.config/mpd/mpdstate"
+playlist_directory "$HOME/.config/mpd/playlists"
+
+audio_output {
+    type "pipewire"
+    name "Pipewire Sound Server"
+}
+EOF
+echo -e "${GREEN}[+] mpd.conf written and directories/files created.${RESET}"
+
+# Configuration du service utilisateur mpd-mpris avec host et port explicites
+python3 -c '
+import os
+
+home = os.path.expanduser("~")
+systemd_user_dir = os.path.join(home, ".config", "systemd", "user")
+os.makedirs(systemd_user_dir, exist_ok=True)
+
+service_content = """[Unit]
+Description=MPD-to-MPRIS bridge
+After=mpd.service
+Requires=mpd.service
+
+[Service]
+ExecStart=/usr/bin/mpd-mpris -host 127.0.0.1 -port 6600
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
+"""
+
+with open(os.path.join(systemd_user_dir, "mpd-mpris.service"), "w") as f:
+    f.write(service_content)
+print("[+] Created mpd-mpris.service user file with custom host and port.")
+'
+
+# Activation des services utilisateurs
+systemctl --user daemon-reload
+systemctl --user enable --now mpd.service || true
+systemctl --user enable --now mpd-mpris.service || true
+
+# --- STEP 8: SYSTEM TWEAKS (SUDOERS NOPASSWD & CPUPOWER) ---
+echo -e "${CYAN}==> [8/8] Applying system tweaks (NOPASSWD & cpupower performance)...${RESET}"
+sudo python3 -c '
+import os, getpass, re
+
+current_user = getpass.getuser()
+sudoers_file = f"/etc/sudoers.d/{current_user}"
+
+# Configure NOPASSWD
+with open(sudoers_file, "w") as f:
+    f.write(f"{current_user} ALL=(ALL) NOPASSWD: ALL\\n")
+os.chmod(sudoers_file, 0o440)
+print(f"[+] Sudoers configured with NOPASSWD for {current_user}.")
+
+# Configure cpupower governor & perf_bias
+cpupower_path = "/etc/default/cpupower"
+if os.path.exists(cpupower_path):
+    with open(cpupower_path, "r") as f:
+        content = f.read()
+    
+    content = re.sub(r"#?\\s*PERF_BIAS=.*", "PERF_BIAS=\x27performance\x27", content)
+    content = re.sub(r"#?\\s*GOVERNOR=.*", "GOVERNOR=\x27performance\x27", content)
+    
+    with open(cpupower_path, "w") as f:
+        f.write(content)
+    print("[+] Updated /etc/default/cpupower to performance mode.")
+else:
+    print("[!] /etc/default/cpupower not found, skipping cpupower tweak.")
+'
+
+sudo systemctl enable --now cpupower.service || true
+
+# --- STEP 9: CLONE NOCTAELESTIA & DEPLOY CONFIGURATIONS ---
+echo -e "${CYAN}==> Finalizing: Cloning Noctaelestia and deploying configurations...${RESET}"
+
 if [ -d "$HOME/Noctaelestia/.git" ]; then
-    echo -e "${YELLOW}[!] Repository ~/Noctaelestia already exists. Pulling latest changes...${RESET}"
+    echo -e "${YELLOW}[!] Repository $HOME/Noctaelestia already exists. Pulling latest changes...${RESET}"
     git -C "$HOME/Noctaelestia" pull
 else
     git clone https://github.com/Chr15zKH4x/Noctaelestia.git "$HOME/Noctaelestia"
 fi
 
-# Ensure ~/.config exists
-mkdir -p ~/.config
+mkdir -p "$HOME/.config"
 
-# Move ~/Noctaelestia/hypr to ~/.config/hypr
 if [ -d "$HOME/Noctaelestia/hypr" ]; then
-    rm -rf ~/.config/hypr
-    mv "$HOME/Noctaelestia/hypr" ~/.config/
-    echo -e "${GREEN}[+] Successfully moved ~/Noctaelestia/hypr to ~/.config/hypr!${RESET}"
+    rm -rf "$HOME/.config/hypr"
+    mv "$HOME/Noctaelestia/hypr" "$HOME/.config/"
+    echo -e "${GREEN}[+] Successfully moved $HOME/Noctaelestia/hypr to $HOME/.config/hypr!${RESET}"
 else
-    echo -e "${YELLOW}[!] Warning: ~/Noctaelestia/hypr directory not found.${RESET}"
+    echo -e "${YELLOW}[!] Warning: $HOME/Noctaelestia/hypr directory not found.${RESET}"
 fi
 
-# Copy ~/Noctaelestia/mpv to ~/.config/mpv
 if [ -d "$HOME/Noctaelestia/mpv" ]; then
-    rm -rf ~/.config/mpv
-    mv "$HOME/Noctaelestia/mpv" ~/.config/
-    echo -e "${GREEN}[+] Successfully copied ~/Noctaelestia/mpv to ~/.config/mpv!${RESET}"
+    rm -rf "$HOME/.config/mpv"
+    mv "$HOME/Noctaelestia/mpv" "$HOME/.config/"
+    echo -e "${GREEN}[+] Successfully copied $HOME/Noctaelestia/mpv to $HOME/.config/mpv!${RESET}"
 else
-    echo -e "${YELLOW}[!] Warning: ~/Noctaelestia/mpv directory not found in the repository.${RESET}"
+    echo -e "${YELLOW}[!] Warning: $HOME/Noctaelestia/mpv directory not found in the repository.${RESET}"
 fi
 
-# Ensure ~/.local/state/noctalia exists and copy remaining repository files into it
-mkdir -p ~/.local/state/noctalia
-cp -r "$HOME/Noctaelestia/"* ~/.local/state/noctalia/
-echo -e "${GREEN}[+] Successfully copied ~/Noctaelestia/* to ~/.local/state/noctalia/${RESET}"
+mkdir -p "$HOME/.local/state/noctalia"
+cp -r "$HOME/Noctaelestia/"* "$HOME/.local/state/noctalia/"
+echo -e "${GREEN}[+] Successfully copied $HOME/Noctaelestia/* to $HOME/.local/state/noctalia/${RESET}"
 
 # --- CLEANUP (OPTIONAL) ---
 echo -e "\n${YELLOW}--------------------------------------------------${RESET}"
-read -p "Do you want to clean up ~/yay-bin and pacman/yay cache? [Y/n] " clean_choice
+read -p "Do you want to clean up $HOME/yay-bin and pacman/yay cache? [Y/n] " clean_choice
 
 case "$clean_choice" in 
   [yY][eE][sS]|[yY]|"") 
     echo -e "${CYAN}==> Cleaning up temporary files...${RESET}"
-    rm -rf ~/yay-bin
+    rm -rf "$HOME/yay-bin"
     yay -Scc --noconfirm
     echo -e "${GREEN}[+] Cleanup completed.${RESET}"
     ;;
   *)
-    echo -e "${YELLOW}[!] Temporary files kept in ~${RESET}"
+    echo -e "${YELLOW}[!] Temporary files kept in $HOME${RESET}"
     ;;
 esac
 
